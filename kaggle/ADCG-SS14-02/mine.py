@@ -1,5 +1,25 @@
 #!/usr/bin/env python3
-from preprocess import preprocess
+from preprocess import *
+
+def preprocess():
+    train = read_file("_TR", "TRAIN", 1, 2500)
+    test  = read_file("_TT", "TEST", 1, 1827)
+    train_label = read_label(1, 2500)
+
+    train_tokens = list(map(tokenize, train))
+    test_tokens  = list(map(tokenize, test))
+
+    '''
+    without stem : 124792
+       with stem :  99114
+    '''
+    dictionary = build_dictionary(train_tokens + test_tokens)
+    _dictionary = build_dictionary_inverse(dictionary)
+
+    train_features = list(map(lambda x: tofeature(_dictionary, x), train_tokens))
+    test_features  = list(map(lambda x: tofeature(_dictionary, x), test_tokens))
+
+    return (train_features, train_label, test_features)
 
 train_features, train_label, test_features = preprocess()
 
